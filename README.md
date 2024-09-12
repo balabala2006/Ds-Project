@@ -1,2 +1,2 @@
 # Ds-Project
-Interpolation Search 
+Binary Search
