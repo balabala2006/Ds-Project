@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search Algorithms Visualization</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #f9f9f9;
+            margin: 0;
+            padding: 0;
+        }
+
+        h1 {
+            color: #333;
+            margin-top: 20px;
+        }
+
+        #visualization {
+            margin: 20px auto;
+            max-width: 800px;
+        }
+
+        #array-container {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin: 20px 0;
+            gap: 10px;
+        }
+
+        .array-element {
+            width: 60px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid #007bff;
+            border-radius: 5px;
+            background-color: #ffffff;
+            color: #007bff;
+            font-size: 18px;
+            font-weight: bold;
+            transition: background-color 0.3s, transform 0.3s;
+        }
+
+        .highlight {
+            background-color: #ffeb3b;
+            transform: scale(1.1);
+        }
+
+        #controls {
+            margin-top: 20px;
+        }
+
+        input[type="number"] {
+            width: 80px;
+            padding: 5px;
+            font-size: 16px;
+            border: 2px solid #007bff;
+            border-radius: 5px;
+            outline: none;
+        }
+
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            color: #ffffff;
+            background-color: #007bff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+            transition: background-color 0.3s, transform 0.3s;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+            transform: scale(1.05);
+        }
+
+        button:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+        }
+
+        .status-message {
+            margin: 20px;
+            font-size: 18px;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <h1>Search Algorithms Visualization</h1>
+    
+    <div id="visualization">
+        <div id="array-container"></div>
+        <div id="controls">
+            <button onclick="startBinarySearch()">Start Binary Search</button>
+            <button onclick="startInterpolationSearch()">Start Interpolation Search</button>
+            <input type="number" id="target" placeholder="Enter target value">
+        </div>
+        <div id="status" class="status-message"></div>
+    </div>
+
+    <script>
+        const arrayContainer = document.getElementById('array-container');
+        const targetInput = document.getElementById('target');
+        const statusMessage = document.getElementById('status');
+        let array = [1, 4, 7, 10, 15, 20, 25, 30, 35, 40];  // Example sorted array
+
+        function displayArray(array, highlightIndices = []) {
+            arrayContainer.innerHTML = '';
+            array.forEach((value, index) => {
+                const element = document.createElement('div');
+                element.className = 'array-element';
+                if (highlightIndices.includes(index)) {
+                    element.classList.add('highlight');
+                }
+                element.textContent = value;
+                arrayContainer.appendChild(element);
+            });
+        }
+
+        function startBinarySearch() {
+            const target = parseInt(targetInput.value);
+            if (isNaN(target)) return;
+            statusMessage.textContent = 'Starting Binary Search...';
+            document.querySelectorAll('button').forEach(btn => btn.disabled = true);
+            binarySearch(array, target);
+        }
+
+        function binarySearch(array, target) {
+            let low = 0;
+            let high = array.length - 1;
+            const intervalId = setInterval(() => {
+                if (low > high) {
+                    clearInterval(intervalId);
+                    statusMessage.textContent = 'Target not found!';
+                    document.querySelectorAll('button').forEach(btn => btn.disabled = false);
+                    return;
+                }
+
+                const mid = Math.floor((low + high) / 2);
+                displayArray(array, [low, mid, high]);
+
+                if (array[mid] === target) {
+                    displayArray(array, [mid]);
+                    statusMessage.textContent = Target found at index ${mid}!;
+                    clearInterval(intervalId);
+                    document.querySelectorAll('button').forEach(btn => btn.disabled = false);
+                } else if (array[mid] < target) {
+                    low = mid + 1;
+                } else {
+                    high = mid - 1;
+                }
+            }, 1000);
+        }
+
+        function startInterpolationSearch() {
+            const target = parseInt(targetInput.value);
+            if (isNaN(target)) return;
+            statusMessage.textContent = 'Starting Interpolation Search...';
+            document.querySelectorAll('button').forEach(btn => btn.disabled = true);
+            interpolationSearch(array, target);
+        }
+
+        function interpolationSearch(array, target) {
+            let low = 0;
+            let high = array.length - 1;
+            const intervalId = setInterval(() => {
+                if (low > high || target < array[low] || target > array[high]) {
+                    clearInterval(intervalId);
+                    statusMessage.textContent = 'Target not found!';
+                    document.querySelectorAll('button').forEach(btn => btn.disabled = false);
+                    return;
+                }
+
+                const pos = low + Math.floor(((target - array[low]) / (array[high] - array[low])) * (high - low));
+                displayArray(array, [low, pos, high]);
+
+                if (array[pos] === target) {
+                    displayArray(array, [pos]);
+                    statusMessage.textContent = Target found at index ${pos}!;
+                    clearInterval(intervalId);
+                    document.querySelectorAll('button').forEach(btn => btn.disabled = false);
+                } else if (array[pos] < target) {
+                    low = pos + 1;
+                } else {
+                    high = pos - 1;
+                }
+            }, 1000);
+        }
+
+        displayArray(array);
+    </script>
+</body>
+</html>
