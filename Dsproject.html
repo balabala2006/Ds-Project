@@ -100,7 +100,6 @@
         <div id="array-container"></div>
         <div id="controls">
             <button onclick="startBinarySearch()">Start Binary Search</button>
-            <button onclick="startInterpolationSearch()">Start Interpolation Search</button>
             <input type="number" id="target" placeholder="Enter target value">
         </div>
         <div id="status" class="status-message"></div>
@@ -149,48 +148,13 @@
 
                 if (array[mid] === target) {
                     displayArray(array, [mid]);
-                    statusMessage.textContent = Target found at index ${mid}!;
+                    statusMessage.textContent = `Target found at index ${mid}!`;
                     clearInterval(intervalId);
                     document.querySelectorAll('button').forEach(btn => btn.disabled = false);
                 } else if (array[mid] < target) {
                     low = mid + 1;
                 } else {
                     high = mid - 1;
-                }
-            }, 1000);
-        }
-
-        function startInterpolationSearch() {
-            const target = parseInt(targetInput.value);
-            if (isNaN(target)) return;
-            statusMessage.textContent = 'Starting Interpolation Search...';
-            document.querySelectorAll('button').forEach(btn => btn.disabled = true);
-            interpolationSearch(array, target);
-        }
-
-        function interpolationSearch(array, target) {
-            let low = 0;
-            let high = array.length - 1;
-            const intervalId = setInterval(() => {
-                if (low > high || target < array[low] || target > array[high]) {
-                    clearInterval(intervalId);
-                    statusMessage.textContent = 'Target not found!';
-                    document.querySelectorAll('button').forEach(btn => btn.disabled = false);
-                    return;
-                }
-
-                const pos = low + Math.floor(((target - array[low]) / (array[high] - array[low])) * (high - low));
-                displayArray(array, [low, pos, high]);
-
-                if (array[pos] === target) {
-                    displayArray(array, [pos]);
-                    statusMessage.textContent = Target found at index ${pos}!;
-                    clearInterval(intervalId);
-                    document.querySelectorAll('button').forEach(btn => btn.disabled = false);
-                } else if (array[pos] < target) {
-                    low = pos + 1;
-                } else {
-                    high = pos - 1;
                 }
             }, 1000);
         }
